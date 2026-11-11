@@ -1,5 +1,5 @@
-// DOCS: references/kit-api.md de la skill docusaurus_animated_diagrams (API) y SKILL.md (proceso). Copia maestra: kit/ de la skill; la carpeta instalada en un proyecto es generada, no la edites.
-/* dk-theme.js: hace que una pieza interactiva (iframe) siga el tema claro/oscuro de DocuKelo.
+// DOCS: references/kit-api.md de la skill interactive-pieces (API) y SKILL.md (proceso). Copia maestra: kit/ de la skill; la carpeta instalada en un proyecto es generada, no la edites.
+/* dk-theme.js: hace que una pieza interactiva (iframe) siga el tema claro/oscuro del sitio anfitrión.
  *
  * Pone en <html> el atributo data-dkt="light|dark". Orden de prioridad:
  *   1. ?theme=light|dark en la URL, o un mensaje postMessage({ dkTheme: 'dark' }) (lo usa el visor del sandbox)

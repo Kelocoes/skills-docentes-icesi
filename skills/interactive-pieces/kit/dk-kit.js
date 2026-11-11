@@ -1,5 +1,5 @@
-// DOCS: references/kit-api.md de la skill docusaurus_animated_diagrams (API) y SKILL.md (proceso). Copia maestra: kit/ de la skill; la carpeta instalada en un proyecto es generada, no la edites.
-/* dk-kit.js: helpers comunes para piezas interactivas de DocuKelo. JavaScript plano, sin dependencias.
+// DOCS: references/kit-api.md de la skill interactive-pieces (API) y SKILL.md (proceso). Copia maestra: kit/ de la skill; la carpeta instalada en un proyecto es generada, no la edites.
+/* dk-kit.js: helpers comunes para piezas interactivas. JavaScript plano, sin dependencias.
  * Se carga como script clasico y expone window.DK. Inspirado en el patron de los simuladores del profesor Domi:
  * escenario como datos + motor generico + limpieza de timers.
  *
@@ -9,7 +9,7 @@
  *   DK.timers()                     { later(fn, ms), clear() }  para animar sin dejar timers colgados
  *   DK.stepper(opciones)            controlador de pasos (siguiente, anterior, reproducir, reiniciar)
  *   DK.autoHeight()                 ajusta el alto del <iframe> que contiene la pieza a su contenido
- *                                   (solo funciona si la pagina que la embebe es del mismo origen, como en DocuKelo)
+ *                                   (solo funciona si la pagina que la embebe es del mismo origen, por ejemplo un sitio Docusaurus)
  */
 window.DK = (function () {
   var SVG_NS = 'http://www.w3.org/2000/svg';

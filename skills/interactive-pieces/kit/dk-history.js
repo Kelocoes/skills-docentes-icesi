@@ -1,4 +1,4 @@
-// DOCS: references/kit-api.md de la skill docusaurus_animated_diagrams (API) y SKILL.md (proceso). Copia maestra: kit/ de la skill; la carpeta instalada en un proyecto es generada, no la edites.
+// DOCS: references/kit-api.md de la skill interactive-pieces (API) y SKILL.md (proceso). Copia maestra: kit/ de la skill; la carpeta instalada en un proyecto es generada, no la edites.
 /* dk-history.js: un navegador con una app de varias páginas + el HISTORIAL (history stack) dibujado al lado.
  * A la izquierda, el navegador (flechas Atrás/Adelante, barra de dirección y la página; en el modo libre se toca de verdad).
  * A la derecha, el historial como pila de tarjetas: la última entrada arriba, la ENTRADA ACTUAL resaltada, y las entradas

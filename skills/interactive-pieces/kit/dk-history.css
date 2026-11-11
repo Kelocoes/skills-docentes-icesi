@@ -1,4 +1,4 @@
-/* DOCS: references/kit-api.md de la skill docusaurus_animated_diagrams. Estilos de dk-history.js (navegador + historial). Cargar después de dk-base.css y dk-nav.css. */
+/* DOCS: references/kit-api.md de la skill interactive-pieces. Estilos de dk-history.js (navegador + historial). Cargar después de dk-base.css y dk-nav.css. */
 .dk-hist .dk-ph-left { align-items: stretch; }
 .bw { position: relative; width: 100%; border: 1.5px solid var(--dk-line); border-radius: 12px; overflow: hidden; background: #fff; color: #1c1b1f; box-shadow: 0 6px 16px rgba(0, 0, 0, .12); }
 .bw.free { border-color: var(--dk-ctl); }

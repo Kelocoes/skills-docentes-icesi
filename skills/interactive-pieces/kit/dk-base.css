@@ -1,5 +1,5 @@
-/* DOCS: references/kit-api.md de la skill docusaurus_animated_diagrams (API) y SKILL.md (proceso). Copia maestra: kit/ de la skill; la carpeta instalada en un proyecto es generada, no la edites. */
-/* dk-base.css: estilos comunes de las piezas interactivas de DocuKelo.
+/* DOCS: references/kit-api.md de la skill interactive-pieces (API) y SKILL.md (proceso). Copia maestra: kit/ de la skill; la carpeta instalada en un proyecto es generada, no la edites. */
+/* dk-base.css: estilos comunes de las piezas interactivas.
  *
  * TOKENS (colores con rol, no con nombre de color). Siempre usar el rol, nunca un hex suelto:
  *   --dk-ctl   control / acción principal   (SYN, FIN, botones, fase activa)

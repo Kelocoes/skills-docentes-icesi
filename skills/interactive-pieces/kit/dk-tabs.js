@@ -1,4 +1,4 @@
-/* DOCS: references/kit-api.md de la skill docusaurus_animated_diagrams. DK.tabs.phone: teléfono con NavigationBar y un detalle que la cubre. Cargar dk-kit.js antes y dk-tabs.css. */
+/* DOCS: references/kit-api.md de la skill interactive-pieces. DK.tabs.phone: teléfono con NavigationBar y un detalle que la cubre. Cargar dk-kit.js antes y dk-tabs.css. */
 (function () {
   var DK = window.DK = window.DK || {};
   var ICON = {
@@ -36,7 +36,7 @@
             var bk = el('button', { class: 'bk', 'data-act': 'back', 'data-pe': 'back', 'aria-label': 'Atrás' });
             bk.innerHTML = '<svg class="pf-ic" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg>';
             appbar.append(bk, el('span', { text: v.detail }));
-          } else appbar.appendChild(el('span', { text: 'DocuKelo' }));
+          } else appbar.appendChild(el('span', { text: 'App' }));
           if (v.detail) {
             body.innerHTML = '<p class="pf-h">' + esc(v.detail) + '</p><div class="pf-kv"><span>Instructor</span><b>Equipo Icesi</b></div><div class="pf-kv"><span>Duración</span><b>16 semanas</b></div>' +
               '<button class="pf-btn out" data-act="back" data-pe="volver">Volver al catálogo</button>';
