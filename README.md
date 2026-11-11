@@ -35,9 +35,56 @@ tema de clase ──► interactive-pieces ──► pieza .html ──┐
              ──► slides-generator ──► slides HTML/PDF ───┘
 ```
 
-## Empezar
+## Cómo usarlo
 
-Lee [`INSTALL.md`](INSTALL.md): instalar toma unos minutos y trae un ejemplo de pedido para cada skill.
+### 1. Instalar (una vez)
+
+Necesitas [Claude Code](https://claude.com/claude-code), Git, Python 3.10+ y Node.js 18+.
+
+```bash
+git clone https://github.com/Kelocoes/skills-docentes-icesi.git
+pip install markdown-it-py pygments playwright
+python -m playwright install chromium
+
+# Copia las skills a tu carpeta personal (macOS / Linux / Git Bash)
+mkdir -p ~/.claude/skills && cp -r skills-docentes-icesi/skills/* ~/.claude/skills/
+```
+
+En Windows PowerShell la copia es:
+
+```powershell
+New-Item -ItemType Directory -Force "$HOME\.claude\skills" | Out-Null
+Copy-Item -Recurse skills-docentes-icesi\skills\* "$HOME\.claude\skills\"
+```
+
+> El repositorio es privado: pide acceso al autor antes de clonarlo.
+
+### 2. Abrir el asistente en la carpeta de tu curso
+
+```bash
+cd mi-curso
+claude
+```
+
+Comprueba que las ve: *"¿Qué skills tienes disponibles?"*
+
+### 3. Pedir en español, como a un auxiliar
+
+| Quiero… | Escribe algo como | Obtienes |
+|---|---|---|
+| Un taller o examen | *Convierte taller-1.md en un taller de Icesi para el curso X, NRC 12345. Uso de IA: colaboración.* | `taller-1.html` y `taller-1.pdf` con la marca Icesi |
+| Una pieza interactiva | *Crea una pieza que explique paso a paso cómo viaja una petición HTTP. El error común es creer que el servidor recuerda al cliente.* | Una carpeta `index.html` que se abre con doble clic |
+| La pieza dentro de Saman | *Empaqueta la pieza para pegarla en una página de Saman.* | Un solo HTML o un `<iframe srcdoc>` (tema claro) |
+| Las slides de una semana | *Quiero las slides de la semana 5 sobre patrones creacionales, 25 diapositivas.* | Primero un plan para aprobar; luego HTML y PDF |
+| Publicar en Saman | *Publica semana-3.html como tema oculto en la Unidad 1 de mi curso.* | El tema creado oculto, verificado contra el archivo local |
+
+Consejos:
+
+- Si el asistente no usa la skill, nómbrala: *"usa la skill de talleres"*.
+- Revisa siempre el resultado antes de publicarlo; las skills de slides y Saman se detienen a pedir tu aprobación.
+- Para Saman, la primera vez el asistente te guía para crear la configuración de tu curso, y tú inicias sesión en la ventana del navegador.
+
+Detalles, requisitos y problemas frecuentes: [`INSTALL.md`](INSTALL.md). Cómo usar piezas sin sitio web o dentro de Saman: [`skills/interactive-pieces/references/standalone-and-saman.md`](skills/interactive-pieces/references/standalone-and-saman.md).
 
 ## Buenas prácticas
 

@@ -19,7 +19,7 @@ python -m playwright install chromium
 ## 2. Instalar las skills
 
 ```bash
-git clone <ruta-o-url-del-repo> skills-docentes-icesi
+git clone https://github.com/Kelocoes/skills-docentes-icesi.git
 ```
 
 Elige **una** de dos opciones:
