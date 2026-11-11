@@ -1,0 +1,19 @@
+# PLANTILLA. Copiar a <repo>/.agents/output-skill/saman-course-uploader/state.yaml.
+# IDs creados en Saman. Lo escribe el agente con saman_config.py (set-module, set-topic, set-dropbox) o
+# se llena de una vez con la operacion `discover`. La historia de cambios va en log.md (saman_config.py log).
+# "url" de un tema HTML es el archivo vigente; cambia con cada PUT: refrescar con la operacion topic_info.
+schema: 1
+course_ou: 0                                     # debe coincidir con course.yaml: course.ou
+refreshed: "2026-01-01"
+
+modules:
+  unidad_1: { id: 0, title: "Unidad 1" }
+
+topics:
+  ejemplo_pagina:  { id: 0, module: unidad_1, kind: page, url: "/content/enforced/.../Semana 1.html" }
+  ejemplo_lectura: { id: 0, module: unidad_1, kind: file }
+  ejemplo_tarea:   { id: 0, module: unidad_1, kind: assignment, dropbox: tarea_1 }
+  # hidden: true  -> pagina oculta (p. ej. rubrica solo para el docente)
+
+dropboxes:
+  tarea_1: { id: 0, topic: ejemplo_tarea, due: "2026-01-01T23:59:00-05:00" }

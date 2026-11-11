@@ -1,0 +1,21 @@
+# PLANTILLA. Copiar a <repo>/.agents/output-skill/saman-course-uploader/manifest.yaml.
+# Declara QUE se publica y DONDE. Lo decide el docente; el agente lo sigue y registra los IDs resultantes en state.yaml.
+#
+# type:
+#   module_description  descripcion HTML de un modulo (edit_module --desc-file)
+#   page                tema HTML (create_topic la primera vez, put_topic_html despues)
+#   file                tema de archivo: PDF, DOCX, ZIP... (create_topic)
+#   assignment          asignacion nativa: se crea por la UI; las instrucciones se cargan por API
+# alias: nombre corto que enlaza este elemento con modules/topics/dropboxes de state.yaml.
+# source: ruta relativa a paths.source_dir. Si la fuente se genera, indicar `builder`.
+schema: 1
+
+conventions:                                     # texto libre del curso: nomenclatura de titulos, orden de modulos, etc.
+  titulos: "Semana N. <titulo>"
+  orden_unidad_1: []                             # lista de alias en el orden en que deben quedar en el modulo
+
+items:
+  - { alias: ejemplo_modulo,  type: module_description, source: modulo_1.html }
+  - { alias: ejemplo_pagina,  type: page,       source: semana_01.html, builder: build/build_semana_01.py }
+  - { alias: ejemplo_lectura, type: file,       source: lecturas/lectura_1.pdf }
+  - { alias: ejemplo_tarea,   type: assignment, source: tarea_1_instrucciones.html, field: dropbox.CustomInstructions }

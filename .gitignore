@@ -1,0 +1,20 @@
+# Credenciales (nunca se suben)
+.env
+.env.*
+*.env
+!.env.example
+
+# Salidas generadas por las skills
+output-skills/
+output-skill/
+.playwright-mcp/
+
+# Dependencias y cachés
+node_modules/
+__pycache__/
+*.py[cod]
+*.bak
+
+# Sistema
+.DS_Store
+Thumbs.db

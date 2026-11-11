@@ -1,0 +1,149 @@
+# Mapa de navegacion de Saman (Brightspace / D2L). Generico: no contiene IDs de ningun curso.
+#
+# COMO USARLO (orden de preferencia, sin explorar a ciegas):
+#   1. api       -> si el nodo tiene `api`, usar fetch (ops.js / render_op.py). Es mas rapido y robusto que la UI.
+#   2. url       -> navegar directo con browser_navigate. Plantillas con {base} {ou} {module} {topic} {dropbox}.
+#   3. actions   -> si hay que usar la UI, usar el selector `role`/`name` del mapa en vez de tomar capturas.
+#   4. Si algo no esta en este mapa o falla: exploracion ACOTADA (maximo 5 snapshots, texto antes que capturas)
+#      y escribir lo aprendido aqui mismo (nodo/accion nueva, `verified` con la fecha). No dejar el hallazgo solo en la conversacion.
+#
+# Campos de un nodo:
+#   url        plantilla de la pagina              ready     condicion de carga (que esperar)
+#   api        endpoints equivalentes              frame     iframe donde corre el contenido (refs de snapshot con prefijo)
+#   shadow     true = recorrer shadowRoot          actions   cosas que se pueden hacer: {role, name, leads_to|result}
+#   verified   fecha en que se probo, o `false`    notes     particularidades
+schema: 1
+platform: brightspace-d2l
+
+global:
+  session_check: { api: "GET /d2l/api/lp/{lp}/users/whoami", ok: 200, on_fail: "repetir login (ops.js: login)" }
+  login:
+    url: "{base}"                       # redirige al IdP configurado en course.yaml (auth.idp)
+    steps: [fill usuario, fill contrasena, click Ingresar]
+    ends_at: /d2l/home
+    permissions: "Llenar el formulario con credenciales del .env exige que Claude Code permita mcp__playwright__browser_fill_form y mcp__playwright__browser_run_code_unsafe (settings.local.json del proyecto). Sin esa regla el sistema bloquea la llamada (Credential Materialization). Alternativa: el docente inicia sesion a mano en la ventana de Playwright."
+    how: "browser_fill_form con target '#usernameUserInput' y 'input[type=password]'; luego click en button:has-text('Ingresar')"
+    verified: 2026-10-23
+  csrf: "escrituras API: header X-Csrf-Token = localStorage['XSRF.Token']"
+  ui_quirks:
+    - "Contenido (Lessons) corre en un iframe /d2l/le/lessons/{ou}; las refs de snapshot llevan prefijo de frame (f9e..)."
+    - "Navbar y editores usan Shadow DOM: recorrer shadowRoot para encontrar enlaces y botones."
+    - "Evitar 'Ver como Estudiante' > 'Cambiar' sin salir despues: deja la sesion en modo estudiante."
+    - "El titulo pasa de 'Cargando...' al nombre del modulo cuando termina de cargar."
+
+nodes:
+  home:
+    url: "{base}/d2l/home/{ou}"
+    verified: 2026-10-22
+
+  lessons:                              # Contenido: lista de unidades
+    url: "{base}/d2l/le/lessons/{ou}"
+    api: ["GET /d2l/api/le/{le}/{ou}/content/toc", "GET /d2l/api/le/{le}/{ou}/content/root/"]
+    frame: smart-curriculum
+    ready: "el titulo deja de decir 'Cargando...'"
+    actions:
+      nueva_unidad: { role: button, name: "Nueva unidad", result: "desplegable: 'Crear unidad' | 'Generar unidad a partir de archivo' (IA)", verified: false, notes: "por API se crea mas rapido (ops.js: create_module)" }
+    verified: 2026-10-22
+
+  lessons_unit:                         # un modulo (unidad)
+    url: "{base}/d2l/le/lessons/{ou}/units/{module}"
+    api: ["GET /d2l/api/le/{le}/{ou}/content/modules/{module}", "PUT same (ops.js: edit_module)", "POST .../modules/{module}/structure/ (ops.js: create_topic)"]
+    frame: smart-curriculum
+    ready: "esperar ~4 s tras navegar"
+    actions:
+      crear_nuevo: { role: button, name: "Crear nuevo", leads_to: dialog_crear_elemento }
+      agregar_existente: { role: button, name: "Agregar existente", result: "vincula archivos, tareas, etc. ya creados", verified: false }
+      visible: { role: switch, name: "Visible", result: "alterna la visibilidad (no cambiar la de contenido existente sin orden del docente)" }
+      opciones: { role: button, name: "Opciones", result: "menu del MODULO: Editar, Ver condiciones de publicacion, Descargar, Publicar en el repositorio de recursos de aprendizaje, Eliminar. No hay 'Reordenar' (mover elementos seria arrastrando: SIN PROBAR)", verified: 2026-10-23 }
+    verified: 2026-10-23
+
+  dialog_crear_elemento:                # "Que desea crear?"
+    notes: "Las tres primeras opciones son <a role=button>; el resto, <div role=button>. Se localizan con getByRole('button', {name}) dentro del frame smart-curriculum."
+    options:
+      pagina:         { label: "Pagina", role: button, leads_to: editor_pagina, verified: true }
+      asignacion:     { label: "Asignacion", role: button, leads_to: dropbox_new, verified: 2026-10-23, notes: "el clic crea el TEMA (su id sale en returnUrl .../topics/{id}) y abre el editor; el dropbox se crea al guardar" }
+      leccion:        { label: "Nueva leccion", result: "submodulo", verified: false }
+      enlace_web:     { label: "Enlace web", verified: false }
+      debate:         { label: "Debate", verified: false }
+      cuestionario:   { label: "Cuestionario", verified: false }
+      lista_verificacion: { label: "Lista de verificacion", verified: false }
+      generar_ia:     { label: "Generar unidad a partir de archivo", verified: false }
+      mas:            { label: "Mas", result: "Autoevaluaciones, Encuestas", verified: false }
+    verified: 2026-10-22
+
+  editor_pagina:                        # pagina HTML (tema tipo archivo)
+    url: "{base}/d2l/le/lessons/{ou}/edit/{module}/loadActivity/file/{topic}?isNew=false"
+    api: ["PUT /d2l/api/le/{le}/{ou}/content/topics/{topic}/file (ops.js: put_topic_html)"]
+    ready: "tarda ~5 s; esperar el campo 'Titulo de la pagina'"
+    shadow: true                        # editor TinyMCE (d2l-htmleditor)
+    actions:
+      codigo_fuente: { role: button, name: "Codigo fuente", notes: "esta en el desbordamiento: abrir 'Mas acciones' primero. Dialogo con un textarea con el HTML completo; cerrar con Escape (el 'Cancelar' de la pagina queda tapado)", verified: 2026-10-22 }
+      seleccionar_plantilla: { role: button, name: "Seleccionar plantilla", notes: "plantillas institucionales de la organizacion (listarlas al abrir, varian por institucion)" }
+      guardar_y_cerrar: { role: button, name: "Guardar y cerrar" }
+      guardar: { role: button, name: "Guardar" }
+      cancelar: { role: button, name: "Cancelar" }
+    verified: 2026-10-22
+
+  topic_view:                           # ver un tema como estudiante
+    url: "{base}/d2l/le/content/{ou}/viewContent/{topic}/View"
+    notes: "enlace estable para citar un tema desde HTML. Para verificar el HTML renderizado completo abrir la Url vigente del tema (api topic_info) y usar captura fullPage: el visor de Contenido corre en iframe y la captura lo corta."
+    verified: 2026-10-22
+
+  dropbox_list:                         # Tareas
+    url: "{base}/d2l/lms/dropbox/dropbox.d2l?ou={ou}"
+    redirects_to: "{base}/d2l/lms/dropbox/admin/folders_manage.d2l?ou={ou}"
+    api: ["GET /d2l/api/le/{le}/{ou}/dropbox/folders/", "PUT .../dropbox/folders/{dropbox} (ops.js: put_dropbox_instructions)", "DELETE .../dropbox/folders/{dropbox} (ops.js: delete_dropbox)"]
+    notes: "crear la tarea por la UI (dropbox_new); instrucciones por API (cuerpo del PUT documentado en api.md)."
+    verified: 2026-10-23
+
+  dropbox_new:                          # editor de asignacion
+    reached_from: dialog_crear_elemento.asignacion
+    url: "{base}/d2l/le/activities/edit/<id codificado>?cft=content&launchedFromLessons=True&returnUrl=%2fd2l%2fle%2flessons%2f{ou}%2ftopics%2f{topic}&isNew=True"
+    shadow: true
+    ready: "esperar ~5 s tras el clic; titulo de pagina 'Editar asignacion'"
+    actions:
+      nombre: { role: textbox, how: "page.getByRole('textbox').first().fill('Titulo')", notes: "el primer textbox no tiene etiqueta accesible" }
+      instrucciones: { notes: "editor TinyMCE; es mas fiable cargarlas despues por API (ops.js: put_dropbox_instructions)" }
+      secciones: { names: ["Fechas y condiciones de disponibilidad", "Envio y finalizacion", "Evaluacion y comentarios"], notes: "cierre, calificacion y rubricas por UI: SIN PROBAR" }
+      guardar_y_cerrar: { role: button, name: "Guardar y cerrar", result: "vuelve a /d2l/le/lessons/{ou}/topics/{topic}; el dropbox ya existe (leer su id con discover o dropbox_info)" }
+    notes: "Hay varios botones 'Guardar y cerrar' en el DOM: usar .first(). El tema nace con la visibilidad del modulo (oculto si el modulo lo esta)."
+    verified: 2026-10-23
+
+  manage_files:                         # Gestionar archivos: unico camino verificado para borrar archivos huerfanos
+    url: "{base}/d2l/lp/manageFiles/main.d2l?ou={ou}"
+    api: ["GET /d2l/api/lp/{lp}/{ou}/managefiles/ (solo lectura)"]
+    ready: "~4 s; la tabla esta en el marco principal (verificado el 2026-10-23: sin iframe). Muestra solo 100 filas: con mas de 100 archivos pulsar 'Cargar pagina siguiente' (getByText) antes de buscar los del final de la lista (verificado el 2026-11-09). La API managefiles pagina igual (campo Next)"
+    actions:
+      seleccionar: { how: "page.getByTitle('Seleccionar \"<nombre>\"', {exact: true}).check()", notes: "el selector CSS con el title entre comillas falla por el escape; usar getByTitle", verified: 2026-10-23 }
+      comprobar: { how: "page.locator('input[type=checkbox]:checked') debe dar exactamente los previstos antes de eliminar" }
+      eliminar: { role: button, name: "Eliminar", then: "dialogo 'Confirmacion' (el boton se llama 'Sí', con tilde): page.getByRole('dialog').first().getByRole('button',{name:'Sí'}). Sin deshacer; existe el boton 'Recuperar'", verified: 2026-10-23 }
+    rules: ["borrar solo archivos que el agente creo y que ningun tema usa (cruzar con Url de content/toc)", "nunca archivos que coincidan con safety.protected_name_patterns"]
+    verified: 2026-10-22
+
+  # Las URLs siguientes se comprobaron el 2026-10-23: todas cargan (200). `redirects_to` es la URL canonica a la que Saman redirige.
+  # `verified` indica que la pagina carga; las acciones de crear/editar que no dicen otra cosa estan SIN PROBAR.
+  rubrics:      { url: "{base}/d2l/lp/rubrics/list.d2l?ou={ou}", actions: { nueva_rubrica: { role: button, name: "Nueva rubrica", notes: "crear una rubrica completa: SIN PROBAR" } }, notes: "la API /rubrics devuelve 400: gestionar por UI", verified: 2026-10-23 }
+  grades:       { url: "{base}/d2l/lms/grades/index.d2l?ou={ou}", redirects_to: "{base}/d2l/lms/grades/admin/settings/wizard_options.d2l?ou={ou}", api: ["GET /d2l/api/le/{le}/{ou}/grades/ (solo lectura)"], notes: "si redirige al asistente de configuracion, el libro de calificaciones del curso aun no esta configurado. Area prohibida para escribir (safety.forbidden)", verified: 2026-10-23 }
+  quizzes:      { url: "{base}/d2l/lms/quizzing/quizzing.d2l?ou={ou}", redirects_to: "{base}/d2l/lms/quizzing/admin/quizzes_manage.d2l?ou={ou}", api: ["GET /d2l/api/le/{le}/{ou}/quizzes/"], notes: "crear: SIN PROBAR", verified: 2026-10-23 }
+  discussions:  { url: "{base}/d2l/le/{ou}/discussions/List", api: ["GET /d2l/api/le/{le}/{ou}/discussions/forums/"], notes: "crear: SIN PROBAR", verified: 2026-10-23 }
+  news_new:     { url: "{base}/d2l/lms/news/newedit.d2l?ou={ou}", verified: 2026-10-23 }
+  calendar:     { url: "{base}/d2l/le/calendar/{ou}", verified: 2026-10-23 }
+  classlist:    { url: "{base}/d2l/lms/classlist/classlist.d2l?ou={ou}", notes: "inscripciones: area prohibida para escribir", verified: 2026-10-23 }
+  groups:       { url: "{base}/d2l/lms/group/group_list.d2l?ou={ou}", verified: 2026-10-23 }
+  attendance:   { url: "{base}/d2l/lms/attendance/index.d2l?ou={ou}", redirects_to: "{base}/d2l/lms/attendance/registers/registers_list.d2l?ou={ou}", verified: 2026-10-23 }
+  class_progress: { url: "{base}/d2l/le/userprogress/{ou}/classprogress/List", verified: 2026-10-23 }
+  selfassess:   { url: "{base}/d2l/lms/selfassess/selfassess.d2l?ou={ou}", redirects_to: "{base}/d2l/lms/selfassess/admin/selfassess_manage.d2l?ou={ou}", verified: 2026-10-23 }
+  quickeval:    { url: "{base}/d2l/le/{ou}/quickeval/", verified: 2026-10-23 }
+  checklists:   { url: "{base}/d2l/lms/checklist/checklists.d2l?ou={ou}", verified: 2026-10-23 }
+  surveys:      { url: "{base}/d2l/lms/survey/surveys.d2l?ou={ou}", redirects_to: "{base}/d2l/lms/survey/admin/surveys_manage.d2l?ou={ou}", verified: 2026-10-23 }
+  media_library: { url: "{base}/d2l/wcs/media-library/?ou={ou}", redirects_to: "{base}/d2l/createspace/{org_ou}/content", verified: 2026-10-23 }
+  import_export: { url: "{base}/d2l/lms/importExport/import_export.d2l?ou={ou}", verified: 2026-10-23 }
+  course_config: { url: "{base}/d2l/lp/cmc/main.d2l?ou={ou}", verified: 2026-10-23 }
+
+navbar:        # menu agrupado (Shadow DOM). Los destinos son los nodos de arriba.
+  Actividades: [dropbox_list, discussions, "Video Assignment (LTI)", "Edpuzzle (LTI)"]
+  Comunicacion: [news_new, "Virtual Classroom (LTI)", surveys]
+  Acompanamiento: [classlist, groups, class_progress, attendance, "Agentes inteligentes", "Premios"]
+  Evaluacion: [quizzes, rubrics, grades, selfassess, quickeval, checklists]
+  Configuracion: [course_config]
+  Mas: [media_library, "Createspace", import_export]

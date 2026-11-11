@@ -1,0 +1,50 @@
+# PLANTILLA. Copiar a <repo>/.agents/output-skill/saman-course-uploader/course.yaml y completar.
+# Casi todo se obtiene sin explorar la UI: ejecutar la operacion `discover` (render_op.py discover)
+# y copiar los valores. Los marcados (*) son obligatorios.
+schema: 1
+
+platform:
+  type: brightspace
+  base_url: https://saman.ejemplo.edu            # (*) sin barra final
+  org_ou: 0                                      # OrgUnit de la organizacion (la usa el contentstyler); sale del HTML de una pagina existente
+  api: { lp: "1.63", le: "1.99" }                # consultar GET /d2l/api/versions/ (operacion discover)
+
+auth:
+  env_file: .env                                 # en la raiz del repo e ignorado por Git (verificar con `git check-ignore .env`)
+  env_vars: { user: SAMAN_USER, password: SAMAN_PASSWORD }   # NOMBRES de variables; nunca los valores aqui
+  idp:                                           # pantalla de login a la que redirige la plataforma
+    host: identity.ejemplo.edu
+    user_selector: "#usernameUserInput"
+    password_label: Contraseña
+    submit_label: Ingresar
+
+course:
+  ou: 0                                          # (*) OrgUnit del curso; operacion my_courses lista los de la cuenta
+  name: Nombre del curso                         # (*) se compara con check_course antes de escribir
+  role: Profesor
+  user_id: 0
+  timezone: America/Bogota                       # para fechas de cierre
+  protected_courses: []                          # OU de otros cursos de la misma cuenta que NUNCA se tocan
+
+storage:
+  enforced_folder: /content/enforced/<ou>-<NombreDeCarpeta>   # (*) la entrega discover en enforced_folders
+
+theme:                                           # opcional; sin esto las paginas salen sin banners
+  banners_folder: ""                             # p. ej. /content/enforced/<carpeta>/ con Banner objetivos, actividades, recursos
+  unit_banners_folder: ""
+  default_unit_banner: ""
+  default_unit_alt: Banner de la unidad
+  content_styler_ou: 0                           # normalmente igual que platform.org_ou
+  accent: "#5454e9"
+  table_header: "#e9683b"
+
+safety:
+  default_hidden: true                           # el contenido nuevo se crea oculto salvo pedido expreso del docente
+  protected_name_patterns: ["(No tocar)"]        # archivos y temas que nunca se editan, mueven ni borran
+  confirm_before: [delete_topic, delete_module, delete_dropbox, delete_file, change_visibility]
+  forbidden: [grades, enrollments]
+
+paths:
+  source_dir: contenido/saman                    # fuente local de lo que se publica (relativa a la raiz del repo)
+  builders_dir: contenido/saman/build
+  scratch_dir: .playwright-mcp                   # ignorado por Git; capturas y respaldos
