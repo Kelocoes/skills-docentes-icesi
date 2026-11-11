@@ -45,4 +45,4 @@ Prueba siempre el `.bundle.html` en el navegador antes de subirlo: recorre todos
 
 ## Enlazar o embeber un sitio completo
 
-Si el curso ya tiene un sitio público (por ejemplo DocuKelo), en Saman se puede crear un tema de tipo **enlace** o una página con `<iframe src="https://...">` hacia el capítulo. Las piezas siguen funcionando porque viven en el sitio.
+Si el curso ya tiene un sitio público de documentación, en Saman se puede crear un tema de tipo **enlace** o una página con `<iframe src="https://...">` hacia el capítulo. Las piezas siguen funcionando porque viven en el sitio.

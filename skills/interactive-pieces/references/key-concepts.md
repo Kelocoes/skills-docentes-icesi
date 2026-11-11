@@ -4,7 +4,7 @@ Destilados del piloto "TCP en acción" y del análisis de las piezas de la sesi�
 
 ## 1. Primero la pregunta, después el dibujo
 
-Antes de tocar código responde por escrito: ¿qué debe poder **explicar** el estudiante después de verlo?, ¿qué malentendido evita?, ¿qué NO hace falta mostrar? El brief del visor tiene esos campos. Un gráfico que se ve bien pero no responde la pregunta del capítulo es decoración (así era `TCP.webp`: bonito, pero no mostraba ACK, pérdida ni handshake, que es lo que el texto afirmaba).
+Antes de tocar código responde por escrito: ¿qué debe poder **explicar** el estudiante después de verlo?, ¿qué malentendido evita?, ¿qué NO hace falta mostrar? Pídeselos a quien encarga el gráfico. Un gráfico que se ve bien pero no responde la pregunta del capítulo es decoración (así era `TCP.webp`: bonito, pero no mostraba ACK, pérdida ni handshake, que es lo que el texto afirmaba).
 
 ## 2. Mostrar lo que el texto afirma
 
@@ -122,8 +122,8 @@ El sitio cambia de tema con su propio botón (`data-theme` en `<html>`), no con 
 
 ## 8. Cómo se integra en el sitio, sin tocar el sitio
 
-HTML autocontenido en `static/interactive/<curso>/<semana>/<slug>/index.html`, invocado con un `<iframe>` normal dentro del `.md`. Se prefiere `<iframe>` y no `IframeWindow` (alto fijo de 300 px y marco de navegador). El alto lo ajusta la pieza sola (`DK.autoHeight`). Escribir el HTML en `candidates/` primero, compararlo en el visor y solo integrarlo con la aprobación del profesor.
+HTML autocontenido en `static/interactive/<curso>/<semana>/<slug>/index.html`, invocado con un `<iframe>` normal dentro del `.md`. Se prefiere `<iframe>` y no `IframeWindow` (alto fijo de 300 px y marco de navegador). El alto lo ajusta la pieza sola (`DK.autoHeight`). Escribir el HTML en una carpeta de revisión primero, revisarlo en el navegador y solo integrarlo con la aprobación del profesor.
 
 ## 9. Probar como lo vería un estudiante
 
-Probar en el sitio real, no solo en el visor: recorrer todos los pasos, activar cada interruptor, cambiar de tema, mirar el espacio con el texto de arriba y de abajo. Los bugs reales del piloto aparecieron así (ver `lessons-learned.md`).
+Probar en el sitio real, no solo en el navegador: recorrer todos los pasos, activar cada interruptor, cambiar de tema, mirar el espacio con el texto de arriba y de abajo. Los bugs reales del piloto aparecieron así (ver `lessons-learned.md`).

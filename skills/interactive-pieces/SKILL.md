@@ -33,7 +33,7 @@ Las rutas son relativas a la carpeta de la skill (`<skill>`), salvo que se diga 
 
 **Cómo se usa el kit en una frase:** cada pieza es un `index.html` que carga `../../../_shared/dk-*.js` (rutas relativas, para que funcione igual en el sitio y abierta como archivo) y solo define **datos** (actores, fases, pasos con leyenda); el motor dibuja, anima y trae los controles. Orden de carga y API: `references/kit-api.md`. Una pieza nueva sale de `node <skill>/host/new-piece.mjs <plantilla> <carpeta>`.
 
-Los **ejemplos de piezas** que se citan en las tablas (`tcp-en-accion`, `semana-14/...`) son piezas reales de los cursos de DocuKelo (https://docukelo-icesi.onrender.com): sirven de referencia visual, pero no vienen en esta carpeta; parte de las plantillas.
+Los **ejemplos de piezas** que se citan en las tablas (`tcp-en-accion`, `semana-14/...`) son piezas reales de cursos del autor: sirven de referencia visual, pero no vienen en esta carpeta; parte de las plantillas.
 
 ## Qué leer y en qué orden
 

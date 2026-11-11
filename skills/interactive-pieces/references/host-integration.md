@@ -68,5 +68,5 @@ Copia la plantilla y reemplaza la ruta al kit por la real, sin importar la profu
 
 ## Lo que no viaja
 
-- Las piezas de ejemplo que se citan en `patterns.md` y `kit-api.md` pertenecen a DocuKelo: en otro proyecto no existen. Parte de las plantillas.
+- Las piezas de ejemplo que se citan en `patterns.md` y `kit-api.md` pertenecen a los cursos del autor: en otro proyecto no existen. Parte de las plantillas.
 - Los textos de las piezas y de la skill están en español.

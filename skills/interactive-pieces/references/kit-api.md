@@ -1,8 +1,8 @@
 # API del kit de piezas interactivas
 
-Ubicación: la copia maestra es `kit/` en esta skill; en cada proyecto se instala (por defecto en `static/interactive/_shared/`) con `host/install.mjs` y esa copia es generada: no se edita (`host-integration.md`). Las líneas «Pieza de referencia» o «Ejemplo» de este archivo apuntan a piezas del proyecto DocuKelo: en otro proyecto no existen, usa las plantillas (`templates/`). Una pieza nueva solo debería escribir **datos** y llamar al kit; si se encuentra copiando o escribiendo lógica de dibujo, animación o controles, esa lógica pertenece al kit (ver "Cuándo ampliar el kit").
+Ubicación: la copia maestra es `kit/` en esta skill; en cada proyecto se instala (por defecto en `static/interactive/_shared/`) con `host/install.mjs` y esa copia es generada: no se edita (`host-integration.md`). Las líneas «Pieza de referencia» o «Ejemplo» de este archivo apuntan a piezas de los cursos del autor: no vienen en esta carpeta, usa las plantillas (`templates/`). Una pieza nueva solo debería escribir **datos** y llamar al kit; si se encuentra copiando o escribiendo lógica de dibujo, animación o controles, esa lógica pertenece al kit (ver "Cuándo ampliar el kit").
 
-Orden de carga en el `index.html` de una pieza (rutas relativas, para que funcionen igual en el sitio y en el visor):
+Orden de carga en el `index.html` de una pieza (rutas relativas, para que funcionen igual en el sitio y en el navegador):
 
 ```html
 <link rel="stylesheet" href="../../../_shared/dk-base.css">
@@ -63,7 +63,7 @@ Todo es JavaScript plano (scripts clásicos, sin módulos ni dependencias) y exp
 - `DK.reduced` es `true` si el usuario pidió menos movimiento. Las animaciones deben saltarse (el kit ya lo hace en `DK.stepper`).
 - `DK.timers()` devuelve `{ later(fn, ms), clear() }`. Usar siempre esto en vez de `setTimeout` suelto: `clear()` evita que un timer viejo pinte sobre un paso nuevo.
 - `DK.stepper({ count, show, dwell, onChange?, onPlay? })` controla una secuencia de pasos. `show(i, animate)` pinta el paso `i` (`-1` = antes del primero). Devuelve `{ go(n, animate), next, prev, reset, play, toggle, stop, current, playing }`. Maneja también las flechas del teclado.
-- `DK.autoHeight()` hace que la pieza ajuste el alto de su propio `<iframe>` al contenido (solo funciona si la página que la embebe es del mismo origen, como en DocuKelo). Si el `<iframe>` lleva `data-dk-fixed` (lo pone `InteractiveFrame` en el diálogo de pantalla completa), **no** ajusta el alto: marca `<html class="dk-fs">` y sale, porque el alto lo fija el diálogo. **Llamarlo siempre al final del script**; `DK.player` ya lo hace.
+- `DK.autoHeight()` hace que la pieza ajuste el alto de su propio `<iframe>` al contenido (solo funciona si la página que la embebe es del mismo origen, por ejemplo un sitio Docusaurus). Si el `<iframe>` lleva `data-dk-fixed` (lo pone `InteractiveFrame` en el diálogo de pantalla completa), **no** ajusta el alto: marca `<html class="dk-fs">` y sale, porque el alto lo fija el diálogo. **Llamarlo siempre al final del script**; `DK.player` ya lo hace.
 
 ## dk-icons.js
 
@@ -138,7 +138,7 @@ scene: function (svg) {
 - **Iconos nuevos:** `lock` (candado: autorización, permisos, cifrado) y `filter` (embudo: un filtro de una cadena).
 - **No hay nodos ocultos ni `text` por paso:** todos los nodos se dibujan siempre. Si algo debe aparecer, desaparecer o cambiar de rótulo (una lista que crece, un contador, un mensaje de error), usa `DK.canvas` (`hidden` + `show`/`hide`, `text`, `sub`, `state`). Con `DK.layers` solo cambia el `sub`. Ejemplo con selector de peticiones y salidas de error fijas: `computacion-3/semana-14/capas-de-defensa/`.
 
-Piezas de referencia: `candidates/static/interactive/computacion-2/semana-1/servlet-en-tomcat/index.html` (3 niveles), `.../semana-2/contenedor-ioc-y-beans/` (usa `sub` y `trail`) y `.../semana-2/spring-en-tomcat/` (4 niveles de anidamiento, flujo completo de una petición).
+Piezas de referencia: `computacion-2/semana-1/servlet-en-tomcat/index.html` (3 niveles), `.../semana-2/contenedor-ioc-y-beans/` (usa `sub` y `trail`) y `.../semana-2/spring-en-tomcat/` (4 niveles de anidamiento, flujo completo de una petición).
 
 ## dk-canvas.js: `DK.canvas(opciones)`
 
@@ -166,7 +166,7 @@ scene: function (svg) {
 
 ## dk-dom.js: `DK.dom(opciones)`
 
-Escena para `DK.player` (con `wide: true`, escenario HTML). La página se arma con los **mismos nodos** que el árbol (`{ id, tag, parent, text, cls, sub, hidden }`; la cabecera del archivo documenta todo), así lo que se ilumina siempre coincide. Opciones: `stage`, `url`, `treeTitle`, `legend: [['reuse', 'Igual'], ...]`, `nodes`. Un paso: `focus`, `marks` (roles de `dk-base.css`), `sub`, `mirror` (la pagina tambien muestra `need`/`dirty`), `text` y `show` (acumulan, para pagina y arbol), `treeText` y `treeShow` (solo el arbol: el Virtual DOM nuevo va un paso adelante del DOM real), `touch` (parpadeo naranja), `state` (pastilla) y `meter`. Mouse, toque (fija el nodo) y teclado (los nodos del arbol son enfocables) iluminan; en celular el arbol se desliza horizontalmente. La pagina simulada siempre es clara (como la pantalla de `DK.phone`). Ejemplos: `static/interactive/computacion-2/semana-14/dom-arbol-pagina/` y `virtual-dom-diff/`.
+Escena para `DK.player` (con `wide: true`, escenario HTML). La página se arma con los **mismos nodos** que el árbol (`{ id, tag, parent, text, cls, sub, hidden }`; la cabecera del archivo documenta todo), así lo que se ilumina siempre coincide. Opciones: `stage`, `url`, `treeTitle`, `legend: [['reuse', 'Igual'], ...]`, `nodes`. Un paso: `focus`, `marks` (roles de `dk-base.css`), `sub`, `mirror` (la pagina tambien muestra `need`/`dirty`), `text` y `show` (acumulan, para pagina y arbol), `treeText` y `treeShow` (solo el arbol: el Virtual DOM nuevo va un paso adelante del DOM real), `touch` (parpadeo naranja), `state` (pastilla) y `meter`. Mouse, toque (fija el nodo) y teclado (los nodos del arbol son enfocables) iluminan; en celular el arbol se desliza horizontalmente. La pagina simulada siempre es clara (como la pantalla de `DK.phone`). Ejemplos: `computacion-2/semana-14/dom-arbol-pagina/` y `virtual-dom-diff/`.
 
 **Pestaña «Código»** (`code: true` en `DK.dom`; en vez del panel de `DK.player`, que se dejaria debajo y alargaria la pieza ~200 px): cada paso trae `codeText` (el codigo completo), `codeTitle` y `code: [lineas]` a resaltar; `view: 'code'` abre la pestaña sola y el estudiante puede volver al árbol. Las pestañas (Árbol DOM, Árbol de componentes, Código) miden lo mismo (el alto del árbol DOM; `syncHeights`) para que la pieza no salte. El medidor solo reserva espacio si algún paso lo usa. **Pantalla completa:** `DK.dom` trae sus reglas `dk-fs` (la página crece con `zoom`, el árbol llena el alto con el svg en posición absoluta y el código ocupa el lugar del árbol), por eso estas piezas se integran con `<InteractiveFrame>`. Lección: un `svg` con `height: 100%` dentro de un contenedor sin alto definido se agranda con el ancho; en flex, el svg va `position: absolute; inset: 0` dentro del contenedor que se estira.
 
@@ -209,7 +209,7 @@ Un paso (con `msgs: []`, que el player usa para la duración):
 - Se calculan solos: las filas visibles (con el orden aplicado **antes** de cortar la página), el paginador, el SQL (`SELECT ... ORDER BY ... LIMIT n OFFSET m` más el `COUNT(*)`) y los metadatos (`getTotalElements`, `getTotalPages`, `getNumber`, `getSize`, `hasNext`). Con `mode: 'all'` la tabla muestra todas las filas con scroll.
 - Usa **datos con sentido** (la entidad del capítulo: `Product(id, name, price)`) y entre 20 y 30 filas: lo bastante para que "todo de golpe" se sienta largo y para que haya varias páginas.
 - Los medidores sirven para volver tangible un costo con números del capítulo (p. ej. `1.450.000 filas` frente a `10 filas`).
-- Pieza de referencia: `candidates/static/interactive/computacion-2/semana-6/paginacion-spring/index.html`.
+- Pieza de referencia: `computacion-2/semana-6/paginacion-spring/index.html`.
 
 ## dk-anatomy.js: `DK.anatomy(opciones)`
 
@@ -238,11 +238,11 @@ Un paso (todos comparten el mismo `doc`):
 - Un segmento con varias líneas de la misma parte (los encabezados) se enfoca completo a la vez: usa el mismo id de parte en cada línea.
 - Los colores `p1`..`p5` son **categóricos** (distinguen partes; no significan control/éxito/error). Están definidos en `dk-base.css` con variante oscura.
 - La estructura que cambia con un interruptor (por ejemplo "con cuerpo (POST)") se resuelve en `build(opts)` devolviendo otro `doc` y otros pasos.
-- **Para código** (un `createSlice`, una clase): `code: true` colorea la sintaxis con `DK.highlight` (mismos roles que el panel de código), no parte las líneas y enfoca la **línea completa** con un borde del color de la parte. `layout: 'stack'` pone el código a todo el ancho y la explicación debajo; úsalo cuando las líneas pasan de ~45 caracteres. Las dos opciones son opcionales y no cambian las piezas existentes. Ejemplo: `static/interactive/computacion-3/semana-12/anatomia-slice/`.
+- **Para código** (un `createSlice`, una clase): `code: true` colorea la sintaxis con `DK.highlight` (mismos roles que el panel de código), no parte las líneas y enfoca la **línea completa** con un borde del color de la parte. `layout: 'stack'` pone el código a todo el ancho y la explicación debajo; úsalo cuando las líneas pasan de ~45 caracteres. Las dos opciones son opcionales y no cambian las piezas existentes. Ejemplo: `computacion-3/semana-12/anatomia-slice/`.
 
-- **`all: true` en un paso:** colorea **todas** las partes a la vez (sin atenuar), para un resumen o para "cortar por colores". Ejemplo: `static/interactive/seminario-de-i-d-i/semana-11/responsabilidades-agenda/` (un archivo de 40 líneas pintado por responsabilidad: datos, controladores, acciones, formulario, lista).
+- **`all: true` en un paso:** colorea **todas** las partes a la vez (sin atenuar), para un resumen o para "cortar por colores". Ejemplo: `seminario-de-i-d-i/semana-11/responsabilidades-agenda/` (un archivo de 40 líneas pintado por responsabilidad: datos, controladores, acciones, formulario, lista).
 
-Pieza de referencia: `candidates/static/interactive/computacion-2/semana-1/peticion-http/index.html`.
+Pieza de referencia: `computacion-2/semana-1/peticion-http/index.html`.
 
 ## dk-tree.js: `DK.tree(opciones)`
 
@@ -275,7 +275,7 @@ Un paso (cada paso se describe completo; roles, etiquetas y `sub` no se heredan)
 - Solo se dibujan las flechas del paso actual.
 - Opciones de tamaño: `nodeW` (168), `nodeH` (52), `levelGap` (118), `top` (40). Con 5 hojas a `width: 1000` caben nombres de ~18 caracteres.
 - **Roles `dirty`, `build`, `reuse`, `self`** (los usa `dk-phone.js` para el árbol de widgets): `dirty` = fallo (naranja, relleno fuerte), `build` = control (azul, relleno fuerte), `reuse` = éxito (verde), `self` = datos (violeta). Sus textos de leyenda están en `ROLE_TXT` (`legend: ['dirty', 'build', 'reuse']`).
-- **Rol `hide`** (`roles: { panel: 'hide' }`): el nodo y la rama que llega a él **todavía no existen** en ese paso (opacidad 0). Sirve para que aparezca una rama nueva cuando llega un requisito nuevo (el `PanelResumen` del prop drilling). El hueco queda reservado: el árbol no se re-distribuye. Ejemplo: `static/interactive/seminario-de-i-d-i/semana-12/elevacion-agenda/`.
+- **Rol `hide`** (`roles: { panel: 'hide' }`): el nodo y la rama que llega a él **todavía no existen** en ese paso (opacidad 0). Sirve para que aparezca una rama nueva cuando llega un requisito nuevo (el `PanelResumen` del prop drilling). El hueco queda reservado: el árbol no se re-distribuye. Ejemplo: `seminario-de-i-d-i/semana-12/elevacion-agenda/`.
 
 ## dk-phone.js: `DK.phone(opciones)`
 
@@ -305,7 +305,7 @@ scene: function (svg, stage, api) {          // el player pasa un tercer argumen
 - **Pantalla (`view`)**: usa las clases `pf-*` de `dk-base.css`: `pf-label`, `pf-big`, `pf-h`, `pf-btn` (+ `out`, `warn`), `pf-field` (campo con etiqueta flotante; `<label class="pf-field"><span>Nombre</span><input data-in="nombre"></label>`), `pf-card`, `pf-result`, `pf-row`, `pf-chip`, `pf-tile` (con `.av`, `.tx` y un `button.x` para eliminar), `pf-empty`, `pf-spin` (indicador de carga que gira, respeta `prefers-reduced-motion`; va dentro de un `pf-empty`) y `pf-error` (vista de error: `<b>` titulo + mensaje, con `pf-btn` debajo para reintentar). Iconos: `DK.phone.icon('add' | 'check' | 'refresh' | 'del' | 'person' | 'mail' | 'phone')`; `DK.phone.esc(texto)` escapa HTML. **Tocable** = `data-act="accion"` (más `data-arg="id"`); **campo de texto** = `data-in="clave"`.
 - **Pasos guiados** (cada paso hereda `state` y `log` de los anteriores; el resto se describe completo): `state` (campos que cambian), `changed` (filas resaltadas), `stale: true` (la pantalla **aún no se reconstruyó**: sigue mostrando el estado anterior; es lo que enseña que "dato" y "pantalla" no cambian a la vez), `tap: 'inc' | 'del:2'` (un dedo toca ese elemento), `stage` (chip activo del camino, 0 a 5), `block` (chip donde el flujo se corta: `setState` que no se llamó), `tree`, `log`, `snack` (un SnackBar), `note` (aviso bajo el camino), `dwell` (ms de lectura en reproducción automática) y `msgs: []` (el player lo necesita).
 - **Modo libre** (`free: true` en un paso): el estudiante toca la pantalla y las `actions` corren de verdad, animando el camino chip a chip. Una acción muta el estado y devuelve `{ set, code, log, snack, note }`: `set: true` recorre todo el camino (setState, dirty, build, pantalla); `set: false` lo corta en `setState` (la variable cambia, la pantalla no). `input` atiende `data-in`: escribir **no** llama a `setState` y marca la fila del `TextField` (`self`). El botón **Restablecer** reinicia el estado.
-- **Qué enseña bien:** que `setState` es avisar y no solo cambiar; que escribir en un `TextField` no reconstruye la página; qué subárbol se reconstruye y qué `const` se reutiliza. Piezas de referencia: `static/interactive/seminario-de-i-d-i/semana-11/` (`setstate-en-accion`, `formulario-registro`, `agenda-monolitica`).
+- **Qué enseña bien:** que `setState` es avisar y no solo cambiar; que escribir en un `TextField` no reconstruye la página; qué subárbol se reconstruye y qué `const` se reutiliza. Piezas de referencia: `seminario-de-i-d-i/semana-11/` (`setstate-en-accion`, `formulario-registro`, `agenda-monolitica`).
 - **`hint`:** texto bajo el teléfono en el modo libre (por defecto «Toca los botones del teléfono y mira el camino a la derecha.»). **`panels`:** qué paneles se muestran a la derecha, entre `'state'`, `'tree'` y `'console'` (por defecto los tres); quita los que el paso no necesita.
 - Ancho: en pantallas de menos de 700 px el teléfono se apila sobre los paneles.
 
@@ -329,7 +329,7 @@ scene: function (svg, stage, api) {
 - **Pasos guiados:** `stack` (arreglo de rutas, base primero; una entrada puede ser `'ruta#etiqueta'` para repetir la misma ruta), `call` (texto de la pastilla), `tap` (`'__back'` flecha de la AppBar, `'sys'` Atrás del sistema, o un `data-act`), `out: 'left' | 'right'` (de qué lado sale la tarjeta que se va), `marks` (marcas por tarjeta: `err`, `ack`, `warn`), `data`, `exit: true` (la app se cierra), `note`, `code`, `free: true` (modo libre) y `msgs: []`.
 - **`actions` (modo libre):** `function (nav, arg, step)` con `nav.push(ruta)`, `nav.pop()`, `nav.canPop()`, `nav.removeUntil(predicado)` y `nav.stack()`; devuelve `{ call, code, note, out }`. `sysBack: true` activa el botón de Atrás del sistema en el modo libre.
 - **`hint`:** texto de ayuda del modo libre (por defecto «Toca los botones del teléfono y mira cómo cambia la pila.»).
-- **Qué enseña bien:** que `push` apila y no reemplaza, que la ruta de abajo sigue viva, cuándo aparece la flecha y qué queda en la pila tras `pushNamedAndRemoveUntil`. Piezas de referencia: `static/interactive/seminario-de-i-d-i/semana-13/` (`navegacion-pila`, `push-remove-until`).
+- **Qué enseña bien:** que `push` apila y no reemplaza, que la ruta de abajo sigue viva, cuándo aparece la flecha y qué queda en la pila tras `pushNamedAndRemoveUntil`. Piezas de referencia: `seminario-de-i-d-i/semana-13/` (`navegacion-pila`, `push-remove-until`).
 
 ## dk-history.js: `DK.history(opciones)`
 
@@ -346,7 +346,7 @@ scene: function (svg, stage, api) {
 - **Un paso describe el historial completo:** `entries: ['/', '/productos']` (la más antigua primero; `'/productos#2'` repite una ruta), `index` (el puntero; por defecto la última), `call`, `note`, `tap` (selector CSS del elemento que toca el cursor antes del cambio; `'__back'` y `'__fwd'` son las flechas), `marks: { '/ruta': { text, tone: 'err' | 'ack' | 'warn' } }`, `data`, `code` y `free: true` (modo libre: el estudiante usa el navegador y la pila cambia de verdad).
 - **Tamaño:** a 690 px de columna se dibuja en **dos columnas** (se apila bajo 520 px). La pila del modo libre crece sola. En pantalla completa (`html.dk-fs`) las dos mitades crecen con `zoom: 1.3`.
 - **Qué enseña bien:** que `push` apila y mueve el puntero, que Atrás no destruye, que un push desde el medio corta lo de adelante, y para qué sirve `replace` (tras pagar o iniciar sesión).
-- Pieza de referencia: `static/interactive/computacion-2/semana-15/historial-navegacion/`.
+- Pieza de referencia: `computacion-2/semana-15/historial-navegacion/`.
 
 ## dk-tabs.js: `DK.tabs.phone(opciones)`
 
@@ -364,7 +364,7 @@ ph.render({ tab: 0, detail: null, q: 'sillas' });   // detail: título del detal
 
 - Con `detail` distinto de `null` la barra inferior se oculta (el detalle la cubre), la AppBar muestra la flecha y el cuerpo entra deslizándose.
 - Atributos `data-pe` para enlazar con código al pasar el ratón: `tab`, `curso`, `back`, `volver`, `q`; la clase `.hov` marca el elemento (estilo en `dk-tabs.css`).
-- Lo que enseña bien: que cambiar de pestaña es `setState` y no toca la pila, y que `IndexedStack` conserva el estado de las páginas (el campo «Buscar» se pierde con la lista directa). Piezas de referencia: `static/interactive/seminario-de-i-d-i/semana-13/` (`tabs-vs-push`, `bottom-nav-anfitriona`, `tabs-codigo`).
+- Lo que enseña bien: que cambiar de pestaña es `setState` y no toca la pila, y que `IndexedStack` conserva el estado de las páginas (el campo «Buscar» se pierde con la lista directa). Piezas de referencia: `seminario-de-i-d-i/semana-13/` (`tabs-vs-push`, `bottom-nav-anfitriona`, `tabs-codigo`).
 
 ## dk-compare.js: `DK.compare(opciones)`
 
@@ -395,13 +395,13 @@ Cada panel usa un `DK.sequence` de 384 de ancho (para que el texto siga legible 
 - Un panel sin actividad lleva `msgs: []`: **lo que no pasa también enseña** ("UDP no abre conexión"). Si una fase no tiene mensajes en un panel, ese panel no dibuja su banda, y se nota que ahí no ocurre nada.
 - El adaptador completa `step.msgs` con la lista del panel más largo para que el player calcule la duración del paso.
 
-Pieza de referencia: `candidates/static/interactive/computacion-2/semana-1/tcp-vs-udp/index.html`.
+Pieza de referencia: `computacion-2/semana-1/tcp-vs-udp/index.html`.
 
 ## dk-radial.js: `DK.radial(opciones)`
 
 Escena circular para `DK.player`. La cabecera de `kit/dk-radial.js` documenta cada opción (anillos con `at` para rótulo recto o `arc` para rótulo curvo, `nodes` como función que se evalúa en cada `setSteps`, `groups` y `matrix` para la matriz de límites, pasos con `focus`, `rings`, `sub` y `msgs` con `bend`/`ctrl`/`lost`/`labelAt`/`labelSide`). Carga `dk-radial.css` después de `dk-base.css`: trae además los estilos de la barra de feature (`.dk-fbar`).
 
-Con `ctrl.rebuild()` (en el objeto que devuelve `DK.player`) la pieza vuelve a ejecutar `build()` sin mover el paso actual; sirve para piezas genéricas que reescriben todos sus textos (por ejemplo, cambiar el nombre de la feature). Pieza de referencia: `static/interactive/computacion-3/semana-12/clean-architecture-circular/index.html`.
+Con `ctrl.rebuild()` (en el objeto que devuelve `DK.player`) la pieza vuelve a ejecutar `build()` sin mover el paso actual; sirve para piezas genéricas que reescriben todos sus textos (por ejemplo, cambiar el nombre de la feature). Pieza de referencia: `computacion-3/semana-12/clean-architecture-circular/index.html`.
 
 ## dk-player.js: `DK.player(opciones)`
 
@@ -418,7 +418,7 @@ DK.player({
 });
 ```
 
-**Pieza ancha** (opción `wide: true`): quita los topes de la tarjeta (760 px) y del dibujo (640 px, o 732 px en `DK.layers`), así la pieza ocupa todo el ancho del iframe y crece con la columna del sitio (en modo enfoque llega a ~1100 px). Para que eso se traduzca en **más espacio** y no solo en todo más grande, dibuja con un `viewBox` de ~1000 de ancho y separa más los recuadros (140 a 200 unidades entre recuadros conectados). Opcional: las piezas sin `wide` no cambian. Ejemplos: piezas de `static/interactive/computacion-3/semana-12/`.
+**Pieza ancha** (opción `wide: true`): quita los topes de la tarjeta (760 px) y del dibujo (640 px, o 732 px en `DK.layers`), así la pieza ocupa todo el ancho del iframe y crece con la columna del sitio (en modo enfoque llega a ~1100 px). Para que eso se traduzca en **más espacio** y no solo en todo más grande, dibuja con un `viewBox` de ~1000 de ancho y separa más los recuadros (140 a 200 unidades entre recuadros conectados). Opcional: las piezas sin `wide` no cambian. Ejemplos: piezas de `computacion-3/semana-12/`.
 
 `affectsPhase`: al cambiar el interruptor, `build` se vuelve a ejecutar y la pieza regresa al final de la fase anterior a esa (o se queda si aún no la había alcanzado). **Panel de código sincronizado** (opción `code`): muestra el código real que se explica y resalta, en cada paso, las líneas que se ejecutan.
 
@@ -427,11 +427,11 @@ code: { title: 'HelloServlet.java', text: CODIGO_COMO_TEXTO },   // en el player
 // y en cada paso:  { ..., code: [9, 10] }                          // líneas a resaltar, numeradas desde 1
 ```
 
-`code` también puede ser una **función** `(opts) => ({ title, text })` cuando el código cambia con los interruptores (por ejemplo, con y sin `@Transactional`): el panel se redibuja en cada cambio y las líneas se numeran igual en todas las variantes (reemplaza una línea, no agregues ni quites líneas, para que los números de los pasos sigan valiendo). Pieza de referencia: `candidates/static/interactive/computacion-2/semana-6/transaccion-transferencia/index.html`.
+`code` también puede ser una **función** `(opts) => ({ title, text })` cuando el código cambia con los interruptores (por ejemplo, con y sin `@Transactional`): el panel se redibuja en cada cambio y las líneas se numeran igual en todas las variantes (reemplaza una línea, no agregues ni quites líneas, para que los números de los pasos sigan valiendo). Pieza de referencia: `computacion-2/semana-6/transaccion-transferencia/index.html`.
 
 **Colores del código por rol** (`DK.highlight`, con leyenda automática en la cabecera del panel; se apaga con `legend: false`): **clase o tipo** (verde azulado, negrita: `Product`, `Pageable`), **método** (marrón: lo que va seguido de `(`), **objeto o variable** (morado: `productRepository`, `page`), **palabra clave** (azul, negrita: `public`, `new`, `throw`), texto, número, anotación y comentario (gris cursiva). Reglas del tokenizador: mayúscula inicial = clase; palabra + `(` = método (tras `new`, es la clase del constructor); el resto en minúscula = objeto o variable. Los tokens `--dk-s-kw/ty/fn/ob/st/nu/an` están en `dk-base.css` con variante oscura. Si el código de un capítulo usa otro lenguaje (XML, SQL), ampliar `DK.highlight` o agregar un resaltador por lenguaje. **Dart:** `late` y `required` son palabras clave, y `int double bool num dynamic` se pintan como tipo (no como variable); `String`, `List`, `Widget` ya salen como clase por la mayúscula inicial. Para números de línea que no se desfasen al editar el código, no los escribas a mano: define las líneas en un arreglo y busca por texto (`at('initState')`, `rng('setState(() {', "_mensaje = 'Usuario")`), lanzando un error si el rango queda vacío.
 
-El panel tiene alto limitado (~196 px) y se **desplaza solo** hasta la primera línea resaltada; trae resaltado de sintaxis mínimo (`DK.highlight`: palabras clave, textos, anotaciones, comentarios). Cuidado al numerar: cuenta las líneas en blanco. Pieza de referencia: `candidates/static/interactive/computacion-2/semana-1/ciclo-vida-servlet/index.html`.
+El panel tiene alto limitado (~196 px) y se **desplaza solo** hasta la primera línea resaltada; trae resaltado de sintaxis mínimo (`DK.highlight`: palabras clave, textos, anotaciones, comentarios). Cuidado al numerar: cuenta las líneas en blanco. Pieza de referencia: `computacion-2/semana-1/ciclo-vida-servlet/index.html`.
 
 **Controles de otros tipos** (además del interruptor `checkbox`): `toggles` acepta un **deslizador** `{ key, type: 'range', label, min, max, step, value, format }` y un **selector** `{ key, type: 'select', label, options: ['A', 'B'], value: 0, affectsPhase | restart: 'first' }`. `build(opts)` recibe el número elegido (`opts[key]`). El deslizador reconstruye los pasos **sin mover** el paso actual (la velocidad cambia y la aguja gira); el selector, como un interruptor, vuelve al inicio de la fase afectada (`affectsPhase`) o, con `restart: 'first'`, al primer paso. Las flechas del teclado dentro de un deslizador o selector **no** cambian de paso. Un selector evita construir una pieza por caso (diez situaciones, cuatro reglas rotas).
 
